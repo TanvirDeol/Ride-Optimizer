@@ -2,6 +2,7 @@ import requests
 import smtplib 
 from sheets import *
 from MST import *
+from clientss import *
 
 #use Google Maps API to find time required to travel between 2 points
 def getDist(startP,endP):
@@ -22,6 +23,8 @@ def main():
     initSheets()
     [long,lat,address] = getClients(driverName)
     print(long,lat,address)
+    getLastIndex()
+
 
 
 if __name__ == "__main__":
