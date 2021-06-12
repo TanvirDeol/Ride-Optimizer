@@ -1,6 +1,7 @@
 import gspread
 import folium
 import random
+from pyasn1_modules.rfc2459 import StreetAddress
 import webview
 import pandas as pd
 import streamlit as st
@@ -18,8 +19,12 @@ client = gspread.authorize(creds)
 
 sheet = client.open("test").worksheet("Clients")
 
-
 data = sheet.get_all_records()
+
+api_key = open("api_key.txt", "r")
+API_KEY = api_key.read()
+api_key.close()
+
 
 
 def getLastIndex():
@@ -28,33 +33,30 @@ def getLastIndex():
     return len(ids)
 
 def willing_talk():
-    talk = input("Also, would you like to socialize on this trip or do you prefer a quite ride? Yes or no? ").lower()
+    talk = input("Talk? (Yes/No)").lower()
     if talk == "yes":
         return True
     if talk == "no":
         return False
         
 def getClientInfo():
-    name = input("Hi, what is your name? ")
-    age = input("If you dont mind us asking, how old are you? ")
-    destination = input("Where are you looking to go today? Please enter full address")
+    name = input("Name? ")
+    age = input("Age?")
+    startAddress = input("Start Address?")
+    endAddress = input("End Address?")
 
-    client_1 = Client(name, age, willing_talk(), destination)
+    client_1 = Client(name, age, willing_talk(), startAddress, endAddress)
 
     if client_1.talk == True:
         print("You have been paired with driver 1")
     elif client_1.talk == False:
         print("You have been paired with driver 2")
 
-    api_key = open("api_key.txt", "r")
-    API_KEY = api_key.read()
-    api_key.close()
-    address = client_1.destination
+    address = client_1.address
 
     params = {
         'key':API_KEY,
         'address': address
-
     }
 
     base_url = 'https://maps.googleapis.com/maps/api/geocode/json?'

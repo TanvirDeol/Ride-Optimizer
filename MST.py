@@ -1,6 +1,7 @@
 import requests
 from collections import defaultdict
 import random
+from clientss import *
 
 mstGraph= {}
 vis =[]
@@ -31,8 +32,18 @@ def initDistances(address, destAddress):
                 print(address[i],address[j])
                 pickMatrix[i][j]= getDist(address[i],address[j])
 
-
-    print()
+    for i in range(0,len(destAddress)):
+        for j in range(0,len(destAddress)):
+            if i==j: continue
+            if dropMatrix[j][i]!=0:
+                dropMatrix[i][j]=dropMatrix[j][i]
+            else:
+                print(destAddress[i],destAddress[j])
+                dropMatrix[i][j]= getDist(destAddress[i],destAddress[j])
+    
+    for i in range(0,len(address)):
+        pickDropDist.append(getDist(address[i],destAddress[i]))
+    
 
 def mstClear():
     global mstGraph
@@ -46,7 +57,7 @@ def mstClear():
 #use Google Maps API to find time required to travel between 2 points
 def getDist(startP,endP):
     # API key
-    api_key = ''
+    api_key = API_KEY
     # base url
     url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
     # get response
