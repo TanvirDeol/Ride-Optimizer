@@ -13,6 +13,7 @@ def main():
     address.insert(0,'104 McCrae Pl, Waterloo, ON N2T 1C6');
     graph = createGraph(address)
     mst = minSpanningTree(graph,len(address))
+    getTravelRoute(mst,len(address))
     
 
     #print(long,lat,address)

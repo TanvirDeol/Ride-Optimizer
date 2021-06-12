@@ -2,6 +2,9 @@ import requests
 from collections import defaultdict
 import random
 
+mstGraph= {}
+vis =[]
+travelRoute = []
 
 class Node:
     def __init__(self,idx,dist):
@@ -76,16 +79,25 @@ def minSpanningTree(graph,n):
         except:mst.update({e.v:[Node(e.u,e.dist)]})
     return mst
 
-mstGraph= {}
-vis =[]
+
 def dfs(node):
+    travelRoute.append(node)
     vis[node]=True
     for e in mstGraph[node]:
-        print()
+        if vis[e.idx]==False:
+            dfs(e.idx)
+            travelRoute.append(node)
 
-def getTravelRoute(mst):
+def getTravelRoute(mst,n):
+    for i in range(0,n):
+        vis.append(False)
+    global mstGraph
     mstGraph=mst
     dfs(0)
+    for i in range(0,len(travelRoute)):
+        print(travelRoute[i],end=' ')
+    print()
+    return travelRoute
 
 
 
