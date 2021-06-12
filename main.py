@@ -3,19 +3,10 @@ import smtplib
 from sheets import *
 from MST import *
 
-<<<<<<< HEAD
-#hello
 #use Google Maps API to find time required to travel between 2 points
 def getDist(startP,endP):
     # API key
     api_key = ''
-=======
-dnd
-#use Google Maps API to find time required to travel between 2 points
-def getDist(startP,endP):
-    # API key
-    api_key = 'api'
->>>>>>> c973815eef015c643f3403c5378edbf3f93c872a
     # base url
     url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
     # get response
@@ -30,6 +21,7 @@ def main():
     driverName = input("Enter your Driver Name\n");
     initSheets()
     [long,lat,address] = getClients(driverName)
+    print(long,lat,address)
 
 
 if __name__ == "__main__":
