@@ -3,11 +3,11 @@ import smtplib
 from sheets import *
 from MST import *
 
-
+#hello
 #use Google Maps API to find time required to travel between 2 points
 def getDist(startP,endP):
     # API key
-    api_key = 'AIzaSyAd1VhpgrWABL3Zmc_goQDIVaQBPF7dgdc'
+    api_key = ''
     # base url
     url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
     # get response
