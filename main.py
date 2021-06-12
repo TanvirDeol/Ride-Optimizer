@@ -4,26 +4,19 @@ from sheets import *
 from MST import *
 from clientss import *
 
-#use Google Maps API to find time required to travel between 2 points
-def getDist(startP,endP):
-    # API key
-    api_key = ''
-    # base url
-    url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
-    # get response
-    r = requests.get(url + "origins=" + startP + "&destinations=" + endP + "&key=" + api_key) 
-    # return time as text and as seconds
-    time = r.json()["rows"][0]["elements"][0]["duration"]["text"]       
-    seconds = r.json()["rows"][0]["elements"][0]["duration"]["value"]
-    return [time,seconds]
     
-
 def main():
-    driverName = input("Enter your Driver Name\n");
+    #driverName = input("Enter your Driver Name\n");
+    driverName = "Driver1"
     initSheets()
     [long,lat,address] = getClients(driverName)
-    print(long,lat,address)
-    getLastIndex()
+    address.insert(0,'104 McCrae Pl, Waterloo, ON N2T 1C6');
+    graph = createGraph(address)
+    mst = minSpanningTree(graph,len(address))
+    
+
+    #print(long,lat,address)
+    #getLastIndex()
 
 
 

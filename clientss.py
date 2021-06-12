@@ -63,3 +63,4 @@ def getClientInfo():
         lon = geometry['location']['lng']
 
     print(lat, lon)
+
