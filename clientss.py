@@ -10,7 +10,9 @@ creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json",scope)
 
 client = gspread.authorize(creds)
 
-sheet = client.open("test").sheet1.Worksheet("Clients")
+sheet = client.open("test").worksheet('Clients')
+
+
 
 
 data = sheet.get_all_records()
@@ -59,4 +61,5 @@ if response['status'] == 'OK':
 
 print(lat, lon)
 
-sheet.update_cell(4,6, lon)
+sheet.insert_cell(4,6, lon)
+sheet.insert_cell(4,7 lat)
