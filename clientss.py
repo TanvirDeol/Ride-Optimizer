@@ -1,4 +1,10 @@
 import gspread
+import folium
+import random
+import webview
+import pandas as pd
+import streamlit as st
+from pandas import DataFrame
 import requests
 from oauth2client.service_account import ServiceAccountCredentials
 from pprint import pprint
@@ -43,7 +49,9 @@ def getClientInfo():
     elif client_1.talk == False:
         print("You have been paired with driver 2")
 
-    API_KEY = ''
+    api_key = open("api_key.txt", "r")
+    API_KEY = api_key.read()
+    api_key.close()
     address = client_1.destination
 
     params = {
@@ -56,11 +64,11 @@ def getClientInfo():
 
     response = requests.get(base_url, params=params).json()
     response.keys()
-
+    lat = ''
+    lon = ''
     if response['status'] == 'OK':
         geometry= response['results'][0]['geometry']
         lat = geometry['location']['lat']
         lon = geometry['location']['lng']
 
     print(lat, lon)
-

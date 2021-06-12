@@ -76,8 +76,16 @@ def minSpanningTree(graph,n):
         except:mst.update({e.v:[Node(e.u,e.dist)]})
     return mst
 
+mstGraph= {}
+vis =[]
+def dfs(node):
+    vis[node]=True
+    for e in mstGraph[node]:
+        print()
+
 def getTravelRoute(mst):
-    print()
+    mstGraph=mst
+    dfs(0)
 
 
 
