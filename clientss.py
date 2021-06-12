@@ -2,7 +2,7 @@ import gspread
 import requests
 from oauth2client.service_account import ServiceAccountCredentials
 from pprint import pprint
-from client import Client
+from client_class import Client
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 
 
@@ -10,7 +10,8 @@ creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json",scope)
 
 client = gspread.authorize(creds)
 
-sheet = client.open("test").sheet1
+sheet = client.open("test").sheet1.Worksheet("Clients")
+
 
 data = sheet.get_all_records()
 
@@ -58,5 +59,4 @@ if response['status'] == 'OK':
 
 print(lat, lon)
 
-
-#commitsssss
+sheet.update_cell(4,6, lon)
