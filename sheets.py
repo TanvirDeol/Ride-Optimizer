@@ -20,19 +20,21 @@ def getClients (driverName):
     long =[]
     lat =[]
     address =[]
+    destLong =[]
+    destLat =[]
+    destAddress = []
     sheet = client.open("test").worksheet('Clients')
     data = sheet.get_all_records()
     drivers = sheet.col_values(9)[1:]
     for i in range (0,len(drivers)):
         cell = sheet.cell(i+2,9).value
         if cell == driverName:
-            long.append(sheet.cell(i+2,6).value)
-            lat.append(sheet.cell(i+2,7).value)
+            long.append(sheet.cell(i+2,7).value)
+            lat.append(sheet.cell(i+2,6).value)
             address.append(sheet.cell(i+2,8).value)
-    #print(drivers)
-    #print(long)
-    #print(lat)
-    #print(address)
-    return [long,lat,address]
+            destLat.append(sheet.cell(i+2,11).value)
+            destLong.append(sheet.cell(i+2,12).value)
+            destAddress.append(sheet.cell(i+2,13).value)
+    return [long,lat,address,destLat,destLong,destAddress]
 
 

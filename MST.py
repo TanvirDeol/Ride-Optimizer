@@ -6,6 +6,7 @@ mstGraph= {}
 vis =[]
 travelRoute = []
 
+
 class Node:
     def __init__(self,idx,dist):
         self.idx = idx
@@ -16,6 +17,17 @@ class Edge:
         self.u = u
         self.v = v
         self.dist = dist
+
+def initDistances():
+    print()
+
+def mstClear():
+    global mstGraph
+    global vis
+    global travelRoute
+    mstGraph=[]
+    vis=[]
+    travelRoute=[]
 
 
 #use Google Maps API to find time required to travel between 2 points
@@ -55,6 +67,7 @@ def minSpanningTree(graph,n):
         for j in range (0,len(graph[i])):
             edges.append(Edge(i,graph[i][j].idx,graph[i][j].dist))
     sortEdges = sorted(edges,key=lambda x:x.dist)
+    print("Sorted Edges-->",end=" ")
     for i in range (0,len(edges)):
         print(sortEdges[i].dist,end=' ');
     print()
@@ -67,7 +80,7 @@ def minSpanningTree(graph,n):
         for i in range(0,n):
             if(tree_id[i] == oldp):
                 tree_id[i]= newp
-    
+    print("MST Edges-->",end=" ")
     for i in range(0,len(mstEdges)):
         print("(",mstEdges[i].u,",",mstEdges[i].v,") -->",mstEdges[i].dist,end=' ')
     print()
@@ -94,11 +107,14 @@ def getTravelRoute(mst,n):
     global mstGraph
     mstGraph=mst
     dfs(0)
+    print("TravelRoute-->",end=" ")
     for i in range(0,len(travelRoute)):
         print(travelRoute[i],end=' ')
     print()
     return travelRoute
 
+def calculateCost():
+    print()
 
 
 
