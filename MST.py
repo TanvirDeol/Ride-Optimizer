@@ -22,7 +22,14 @@ def initDistances(address, destAddress):
     pickMatrix = [[0 for x in range(len(address))] for y in range(len(address))] 
     dropMatrix = [[0 for x in range(len(destAddress))] for y in range(len(destAddress))] 
     pickDropDist =[]
-    
+    for i in range(0,len(address)):
+        for j in range(0,len(address)):
+            if i==j: continue
+            if pickMatrix[j][i]!=0:
+                pickMatrix[i][j]=pickMatrix[j][i]
+            else:
+                print(address[i],address[j])
+                pickMatrix[i][j]= getDist(address[i],address[j])
 
 
     print()

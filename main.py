@@ -28,7 +28,9 @@ def main():
     dropOffRoute = getTravelRoute(dropOffMst,len(destAddress))
     mstClear()
 
-    plotLines(pickUpRoute,dropOffRoute,lat,long,destLat,destLong)
+    plotEntireRoute(pickUpRoute,dropOffRoute,lat,long,destLat,destLong)
+
+    #initDistances(address,destAddress)
 
     #print(long,lat,address)
     #getLastIndex()

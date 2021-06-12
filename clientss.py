@@ -71,8 +71,11 @@ def getClientInfo():
     print(lat, lon)
     return [lat, lon]
 
+map_plot_route = folium.Map(location=[38, -98], zoom_start=4)
+
 def markersView():
-    m = folium.Map(location=[43.7315, -79.7624], tiles="OpenStreetMap", zoom_start=12)
+    global map_plot_route
+    #map = folium.Map(location=[43.7315, -79.7624], tiles="OpenStreetMap", zoom_start=12)
     lat = sheet.col_values(6)[1:]
     lon = sheet.col_values(7)[1:]
     print (lat, lon)
@@ -97,17 +100,42 @@ def markersView():
         print (i[1][0], i[1][1])
         a = float(i[1][0])
         b = float(i[1][1])
-        folium.Marker(location = [a, b], popup='city').add_to(m)
+        folium.Marker(location = [a, b], popup='city').add_to(map_plot_route)
         #print(a,b)
 
-    
     print (df)
-    m.save('x.html')
+    map_plot_route.save('x.html')
     file = open("x.html", "r")
     code = file.read()
 
     webview.create_window('Hello world', html=code)
     webview.start()
 
-def plotLines(pickRoute,dropRoute,lat,long,destLat,destLong):
-    print()
+def plotEntireRoute(pickRoute,dropRoute,lat,long,destLat,destLong):
+    for i in range(1,len(pickRoute)):
+        plot(float(lat[pickRoute[i-1]]),float(long[pickRoute[i-1]]),float(lat[pickRoute[i]]),float(long[pickRoute[i]]))
+    #0 3 1 3 0 2 0 4 5 4 0
+    markersView()
+    #file = open("x.html", "r")
+    #code = file.read()
+    #webview.create_window('Hello world', html=code)
+    #webview.start()
+    
+
+
+
+def plot(firstLat,firstLong,secLat,secLong):
+    global map_plot_route
+    route_lats_longs = [[firstLat,firstLong],
+                        [secLat,secLong]]
+
+    # add route to map
+    folium.PolyLine(route_lats_longs).add_to(map_plot_route)
+
+    # display map
+    #map_plot_route
+    map_plot_route.save('x.html')
+    
+    
+
+    
