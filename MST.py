@@ -18,7 +18,13 @@ class Edge:
         self.v = v
         self.dist = dist
 
-def initDistances():
+def initDistances(address, destAddress):
+    pickMatrix = [[0 for x in range(len(address))] for y in range(len(address))] 
+    dropMatrix = [[0 for x in range(len(destAddress))] for y in range(len(destAddress))] 
+    pickDropDist =[]
+    
+
+
     print()
 
 def mstClear():

@@ -108,3 +108,6 @@ def markersView():
 
     webview.create_window('Hello world', html=code)
     webview.start()
+
+def plotLines(pickRoute,dropRoute,lat,long,destLat,destLong):
+    print()

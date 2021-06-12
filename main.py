@@ -10,12 +10,16 @@ def main():
     driverName = "Driver1"
     initSheets()
     [long,lat,address,destLat,destLong,destAddress] = getClients(driverName)
+    lat.insert(0,'43.45324');
+    long.insert(0,'-80.56395');
     address.insert(0,'104 McCrae Pl, Waterloo, ON N2T 1C6');
+    destLat.insert(0,'43.45324');
+    destLong.insert(0,'-80.56395');
     destAddress.insert(0,'104 McCrae Pl, Waterloo, ON N2T 1C6');
 
     pickUpGraph = createGraph(address)
     pickUpMst = minSpanningTree(pickUpGraph,len(address))
-    pickupRoute = getTravelRoute(pickUpMst,len(address))
+    pickUpRoute = getTravelRoute(pickUpMst,len(address))
     mstClear()
     print()
 
@@ -23,6 +27,8 @@ def main():
     dropOffMst = minSpanningTree(dropOffGraph,len(destAddress))
     dropOffRoute = getTravelRoute(dropOffMst,len(destAddress))
     mstClear()
+
+    plotLines(pickUpRoute,dropOffRoute,lat,long,destLat,destLong)
 
     #print(long,lat,address)
     #getLastIndex()
