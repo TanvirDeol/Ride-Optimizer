@@ -15,15 +15,15 @@ def drawRoute(travelRoute,lat,long):
         b = x.strftime("%Y-%m-%d %H:%M:%S")
         lines.append({
             "coordinates":[
-                [float(lat[travelRoute[i-1]]),float(long[travelRoute[i-1]])],
-                [float(lat[travelRoute[i]]),float(long[travelRoute[i]])],
+                [float(long[travelRoute[i-1]]),float(lat[travelRoute[i-1]])],
+                [float(long[travelRoute[i]]),float(lat[travelRoute[i]])],
             ],
             "dates": [a,b],
             "color":"red",
         })
 
     #pprint(lines)
-    m = folium.Map(location=[35.68159659061569, 139.76451516151428], zoom_start=16)
+    m = folium.Map(location=[43,-80], zoom_start=16)
     # Lon, Lat order.
     '''lines = [
         {
