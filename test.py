@@ -1,26 +1,77 @@
-import requests
-import smtplib 
+import folium
+import webview
+import folium.plugins as plugins
 
-# API key
-api_file = open("api_key.txt", "r")
-api_key = api_file.readline()
-api_file.close()
 
-# home address input
-home = input("Enter a home address\n") 
-  
-# work address input
-work = input("Enter a work address\n") 
-  
-# base url
-url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
+m = folium.Map(location=[35.68159659061569, 139.76451516151428], zoom_start=16)
 
-# get response
-r = requests.get(url + "origins=" + home + "&destinations=" + work + "&key=" + api_key) 
- 
-# return time as text and as seconds
-time = r.json()["rows"][0]["elements"][0]["duration"]["text"]       
-seconds = r.json()["rows"][0]["elements"][0]["duration"]["value"]
-  
-# print the travel time
-print("\nThe total travel time from home to work is", time)
+# Lon, Lat order.
+lines = [
+    {
+        "coordinates": [
+            [139.76451516151428, 35.68159659061569],
+            [139.75964426994324, 35.682590062684206],
+        ],
+        "dates": ["2017-06-02T00:00:00", "2017-06-02T00:10:00"],
+        "color": "red",
+    },
+    {
+        "coordinates": [
+            [139.75964426994324, 35.682590062684206],
+            [139.7575843334198, 35.679505030038506],
+        ],
+        "dates": ["2017-06-02T00:10:00", "2017-06-02T00:20:00"],
+        "color": "blue",
+    },
+    {
+        "coordinates": [
+            [139.7575843334198, 35.679505030038506],
+            [139.76337790489197, 35.678040905014065],
+        ],
+        "dates": ["2017-06-02T00:20:00", "2017-06-02T00:30:00"],
+        "color": "green",
+        "weight": 15,
+    },
+    {
+        "coordinates": [
+            [139.76337790489197, 35.678040905014065],
+            [139.76451516151428, 35.68159659061569],
+        ],
+        "dates": ["2017-06-02T00:30:00", "2017-06-02T00:40:00"],
+        "color": "#FFFFFF",
+    },
+]
+
+features = [
+    {
+        "type": "Feature",
+        "geometry": {
+            "type": "LineString",
+            "coordinates": line["coordinates"],
+        },
+        "properties": {
+            "times": line["dates"],
+            "style": {
+                "color": line["color"],
+                "weight": line["weight"] if "weight" in line else 5,
+            },
+        },
+    }
+    for line in lines
+]
+
+plugins.TimestampedGeoJson(
+    {
+        "type": "FeatureCollection",
+        "features": features,
+    },
+    period="PT1M",
+    add_last_point=True,
+).add_to(m)
+
+m.save('x.html')
+file = open("x.html", "r")
+code = file.read()
+
+webview.create_window('Hello world', html=code)
+webview.start()

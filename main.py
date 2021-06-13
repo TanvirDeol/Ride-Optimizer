@@ -6,7 +6,7 @@ from clientss import *
 
     
 def main():
-    #driverName = input("Enter your Driver Name\n");
+    driverName = input("Enter your Driver Name\n");
     driverName = "Driver1"
     initSheets()
     [long,lat,address,destLat,destLong,destAddress] = getClients(driverName)
@@ -31,9 +31,10 @@ def main():
     #plotEntireRoute(pickUpRoute,dropOffRoute,lat,long,destLat,destLong)
 
     initDistances(address,destAddress)
-
+    
     #print(long,lat,address)
     #getLastIndex()
+    getClientInfo()
 
 
 

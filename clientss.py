@@ -39,13 +39,8 @@ def willing_talk():
     if talk == "no":
         return False
         
-def getClientInfo():
-    name = input("Name? ")
-    age = input("Age?")
-    startAddress = input("Start Address?")
-    endAddress = input("End Address?")
-
-    client_1 = Client(name, age, willing_talk(), startAddress, endAddress)
+def getClientInfo(name, age,talk, startAddress, endAddress):
+    client_1 = Client(name, age, talk, startAddress, endAddress)
 
     if client_1.talk == True:
         print("You have been paired with driver 1")
@@ -63,15 +58,31 @@ def getClientInfo():
 
     response = requests.get(base_url, params=params).json()
     response.keys()
-    lat = ''
-    lon = ''
+    sLat = ''
+    sLon = ''
     if response['status'] == 'OK':
         geometry= response['results'][0]['geometry']
-        lat = geometry['location']['lat']
-        lon = geometry['location']['lng']
+        sLat = geometry['location']['lat']
+        sLon = geometry['location']['lng']
+    print(sLat, sLon)
 
-    print(lat, lon)
-    return [lat, lon]
+    address = client_1.destination
+    params = {
+        'key':API_KEY,
+        'address': address
+    }
+
+    response = requests.get(base_url, params=params).json()
+    response.keys()
+    eLat = ''
+    eLon = ''
+    if response['status'] == 'OK':
+        geometry= response['results'][0]['geometry']
+        eLat = geometry['location']['lat']
+        eLon = geometry['location']['lng']
+    print(eLat, eLon)
+
+    return [sLat,sLon,eLat,eLon]
 
 map_plot_route = folium.Map(location=[38, -98], zoom_start=4)
 
@@ -97,7 +108,7 @@ def markersView():
 
     print(dict)
 
-    df = DataFrame({'Latitude':[newLat], 'Longitude':[newLon]})
+    #df = DataFrame({'Latitude':[newLat], 'Longitude':[newLon]})
     for i in dict.items():
         print (i[1][0], i[1][1])
         a = float(i[1][0])
@@ -105,7 +116,7 @@ def markersView():
         folium.Marker(location = [a, b], popup='city').add_to(map_plot_route)
         #print(a,b)
 
-    print (df)
+    #print (df)
     map_plot_route.save('x.html')
     file = open("x.html", "r")
     code = file.read()
@@ -115,7 +126,7 @@ def markersView():
 
 def plotEntireRoute(pickRoute,dropRoute,lat,long,destLat,destLong):
     for i in range(1,len(pickRoute)):
-        plot(float(lat[pickRoute[i-1]]),float(long[pickRoute[i-1]]),float(lat[pickRoute[i]]),float(long[pickRoute[i]]))
+        plotLine(float(lat[pickRoute[i-1]]),float(long[pickRoute[i-1]]),float(lat[pickRoute[i]]),float(long[pickRoute[i]]))
     #0 3 1 3 0 2 0 4 5 4 0
     markersView()
     #file = open("x.html", "r")
@@ -124,9 +135,7 @@ def plotEntireRoute(pickRoute,dropRoute,lat,long,destLat,destLong):
     #webview.start()
     
 
-
-
-def plot(firstLat,firstLong,secLat,secLong):
+def plotLine(firstLat,firstLong,secLat,secLong):
     global map_plot_route
     route_lats_longs = [[firstLat,firstLong],
                         [secLat,secLong]]
@@ -138,6 +147,25 @@ def plot(firstLat,firstLong,secLat,secLong):
     #map_plot_route
     map_plot_route.save('x.html')
     
+def plotMarkers(latArr,lonArr):
+    dict = {}
+    for i in range(0,len(latArr)):
+        dict[i] = [float(latArr[i]),float(lonArr[i])]
+
+    map = folium.Map(location=[dict[1][0], dict[1][1]], zoom_start=12)
+    for i in dict.items():
+        a = i[1][0]
+        b = i[1][1]
+        folium.Marker(location = [a,b], popup='point').add_to(map)
+    
+    map.save('map.html')
+    file = open("map.html", "r")
+    code = file.read()
+    return code
+
+    
+
+
     
 
     
