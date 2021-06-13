@@ -39,8 +39,8 @@ def willing_talk():
     if talk == "no":
         return False
         
-def getClientInfo(name, age,talk, startAddress, endAddress):
-    client_1 = Client(name, age, talk, startAddress, endAddress)
+def getClientInfo(name, age,talk,smoke,lang, startAddress, endAddress):
+    client_1 = Client(name, age, talk,smoke,lang, startAddress, endAddress)
 
     if client_1.talk == True:
         print("You have been paired with driver 1")

@@ -77,9 +77,9 @@ def createGraph(address):
             except:graph.update({i:[Node(j,d)]})
             try:graph[j].append(Node(i,d))
             except:graph.update({j:[Node(i,d)]})
-        for k in range(0,len(graph[i])):
-            print("{",graph[i][k].idx,",",graph[i][k].dist,"}",end=' ')
-        print()
+        #for k in range(0,len(graph[i])):
+            #print("{",graph[i][k].idx,",",graph[i][k].dist,"}",end=' ')
+        #print()
     return graph
 
 def minSpanningTree(graph,n):
@@ -105,9 +105,9 @@ def minSpanningTree(graph,n):
             if(tree_id[i] == oldp):
                 tree_id[i]= newp
     print("MST Edges-->",end=" ")
-    for i in range(0,len(mstEdges)):
-        print("(",mstEdges[i].u,",",mstEdges[i].v,") -->",mstEdges[i].dist,end=' ')
-    print()
+    #for i in range(0,len(mstEdges)):
+        #print("(",mstEdges[i].u,",",mstEdges[i].v,") -->",mstEdges[i].dist,end=' ')
+    #print()
     mst={}
     for e in mstEdges:
         try:mst[e.u].append(Node(e.v,e.dist))
