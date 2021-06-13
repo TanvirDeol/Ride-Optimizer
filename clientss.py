@@ -1,6 +1,7 @@
 import gspread
 import folium
 import random
+from numpy import add
 from pyasn1_modules.rfc2459 import StreetAddress
 import webview
 import pandas as pd
@@ -12,40 +13,45 @@ from pprint import pprint
 from client_class import Client
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 
-
+#Set up Google Sheets API
 creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json",scope)
-
 client = gspread.authorize(creds)
-
 sheet = client.open("test").worksheet("Clients")
-
 data = sheet.get_all_records()
-
 api_key = open("api_key.txt", "r")
 API_KEY = api_key.read()
 api_key.close()
 
 
-
+#Get the length of the dataset
 def getLastIndex():
     ids = sheet.col_values(1)
     print(len(ids))
     return len(ids)
 
+#See if a client is willing to talk
 def willing_talk():
     talk = input("Talk? (Yes/No)").lower()
     if talk == "yes":
         return True
     if talk == "no":
         return False
-        
+
+#Select an optimal driver for a client, push the client info to the Database    
 def getClientInfo(name, age,talk,smoke,lang, startAddress, endAddress):
     client_1 = Client(name, age, talk,smoke,lang, startAddress, endAddress)
 
-    if client_1.talk == True:
-        print("You have been paired with driver 1")
-    elif client_1.talk == False:
-        print("You have been paired with driver 2")
+    driver = ''
+    if client_1.lang.lower() != "english":
+        driver = "Driver5"
+    elif client_1.talk == True and client_1.smoke == True:
+        driver = "Driver1"
+    elif client_1.talk == False and client_1.smoke == False:
+        driver = "Driver2"
+    elif client_1.talk == True and client_1.smoke == False:
+        driver = "Driver3"
+    elif client_1.talk == False and client_1.smoke == True:
+        driver = "Driver4"
 
     address = client_1.address
 
@@ -82,13 +88,21 @@ def getClientInfo(name, age,talk,smoke,lang, startAddress, endAddress):
         eLon = geometry['location']['lng']
     print(eLat, eLon)
 
+    length = len(sheet.col_values(1)[1:])
+    t = "Yes"
+    if talk== False: t = "No"
+    sm = "Yes"
+    if smoke == False: sm= "No"
+    l = "Client"+str(length)
+    clientData = [l,name,age,t,lang,str(sLat),str(sLon),startAddress,driver,"No",str(eLat),str(eLon),endAddress,sm]
+    sheet.insert_row(clientData,length)
     return [sLat,sLon,eLat,eLon]
 
 map_plot_route = folium.Map(location=[38, -98], zoom_start=4)
 
+#Plot an array of locations on a interactive map
 def markersView():
     global map_plot_route
-    #map = folium.Map(location=[43.7315, -79.7624], tiles="OpenStreetMap", zoom_start=12)
     lat = sheet.col_values(6)[1:]
     lon = sheet.col_values(7)[1:]
     print (lat, lon)
@@ -107,8 +121,6 @@ def markersView():
 
 
     print(dict)
-
-    #df = DataFrame({'Latitude':[newLat], 'Longitude':[newLon]})
     for i in dict.items():
         print (i[1][0], i[1][1])
         a = float(i[1][0])
@@ -124,17 +136,17 @@ def markersView():
     webview.create_window('Hello world', html=code)
     webview.start()
 
+#Plot a route made up of locations on the interactive map
 def plotEntireRoute(pickRoute,dropRoute,lat,long,destLat,destLong):
     for i in range(1,len(pickRoute)):
         plotLine(float(lat[pickRoute[i-1]]),float(long[pickRoute[i-1]]),float(lat[pickRoute[i]]),float(long[pickRoute[i]]))
-    #0 3 1 3 0 2 0 4 5 4 0
     markersView()
     #file = open("x.html", "r")
     #code = file.read()
     #webview.create_window('Hello world', html=code)
     #webview.start()
     
-
+#Plot a line between 2 locations on the map
 def plotLine(firstLat,firstLong,secLat,secLong):
     global map_plot_route
     route_lats_longs = [[firstLat,firstLong],
@@ -147,6 +159,7 @@ def plotLine(firstLat,firstLong,secLat,secLong):
     #map_plot_route
     map_plot_route.save('x.html')
     
+#Plot blue markers representing location on the map
 def plotMarkers(latArr,lonArr):
     dict = {}
     for i in range(0,len(latArr)):

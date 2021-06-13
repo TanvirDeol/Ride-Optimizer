@@ -10,18 +10,20 @@ pickMatrix = []
 dropMatrix = []
 pickDropDist =[]
 
-
+#Nodes are used in graph networks to represent a location
 class Node:
     def __init__(self,idx,dist):
         self.idx = idx
         self.dist = dist
         
+#Edges are used in graph networks to represent roads between 2 locations
 class Edge:
     def __init__(self,u,v,dist):
         self.u = u
         self.v = v
         self.dist = dist
 
+#This uses the Google Maps API to determine distances between all N pairs of clients, used to calcuate realtime data
 def initDistances(address, destAddress):
     global pickMatrix
     global dropMatrix
@@ -51,7 +53,7 @@ def initDistances(address, destAddress):
     for i in range(0,len(address)):
         pickDropDist.append(getDist(address[i],destAddress[i]))
     
-
+# Clears the Minimum Spanning Tree
 def mstClear():
     global mstGraph
     global vis
@@ -74,6 +76,8 @@ def getDist(startP,endP):
     dist = (r.json()["rows"][0]["elements"][0]["distance"]["value"])/1000
     return [time,dist]
 
+#Uses client locations to create a graph data structure
+#This graph has (N)(N-1) edges, and is converted to a tree with N-1 edges using the Minumum Spanning Tree Algorithm
 def createGraph(address,num):
     graph=defaultdict(set)
     for i in range(0,len(address)):
@@ -93,6 +97,8 @@ def createGraph(address,num):
         #print()
     return graph
 
+#Creates a Minimum Spanning Tree of client locations to minimize the distance the driver has to travel
+#The drivers only uses the roads in this tree to get to clients
 def minSpanningTree(graph,n):
     edges = []
     tree_id =[]
@@ -127,7 +133,7 @@ def minSpanningTree(graph,n):
         except:mst.update({e.v:[Node(e.u,e.dist)]})
     return mst
 
-
+#Depth-first search is used to create a route (an array of points) to travel between locations
 def dfs(node):
     travelRoute.append(node)
     vis[node]=True
@@ -136,6 +142,7 @@ def dfs(node):
             dfs(e.idx)
             travelRoute.append(node)
 
+# Creates the travel route, which is a list of addresses chosen to minimize time and distance
 def getTravelRoute(mst,n,addressList,num):
     distUpdate = []
     timeUpdate = []
@@ -161,6 +168,7 @@ def getTravelRoute(mst,n,addressList,num):
 
     return [travelRoute,distUpdate,timeUpdate,fromToUpdate]
 
+#Calculates the time and distance if the driver gave rides to clients one-by-one which is the slow way
 def calculateSlowCost(length):
     totalDist =0
     totalTime = 0
@@ -168,7 +176,8 @@ def calculateSlowCost(length):
         totalDist+= pickMatrix[0][i][1]+pickDropDist[i][1]+dropMatrix[0][i][1]
         totalTime+= convertTime(pickMatrix[0][i][0])+convertTime(pickDropDist[i][0])+convertTime(dropMatrix[0][i][0])
     return [totalDist,totalTime]
-        
+
+#Used to convert strings of time to numbers, the strings are fetched from the Maps API  
 def convertTime(time):
     n =0
     if "hour" not in time:

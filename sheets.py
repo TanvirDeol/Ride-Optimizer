@@ -6,7 +6,7 @@ client = ''
 scope = ''
 creds = ''
 
-#initialize spreadsheet database
+#initialize Spreadsheet Database
 def initSheets():
     global client
     global creds
@@ -15,7 +15,7 @@ def initSheets():
     creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json",scope)
     client = gspread.authorize(creds)
 
-#get information of clients that are matched with driver X
+#Get information of clients that are matched with driver X, the driver gives these clients the ride
 def getClients (driverName):
     long =[]
     lat =[]

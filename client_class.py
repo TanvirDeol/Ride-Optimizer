@@ -1,3 +1,4 @@
+#Class for a client object, along with its properties
 class Client:
 
     def __init__(self, name, age, talk, smoke, lang,startP, endP):

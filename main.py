@@ -4,7 +4,7 @@ from sheets import *
 from MST import *
 from clientss import *
 
-    
+#Deprecated Main Method, now the GUI is used
 def main():
     #driverName = input("Enter your Driver Name\n");
     '''driverName = "Driver1"

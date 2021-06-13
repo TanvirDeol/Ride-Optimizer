@@ -1,6 +1,8 @@
 import folium 
 import webview
 
+#Deprecated file, used to test the folium map library
+
 # multiple markers using dictionary
 
 #markers_dict = {'Los Angeles': [34.041008, -118.246653], 

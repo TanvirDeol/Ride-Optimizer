@@ -1,7 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from clientss import *
 
-
+#This is the client side app
+#PyQt5 GUI set up. This initilizes all the buttons and labels in the app
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -141,6 +142,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    #Part of the automatic GUI setup
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "RideOptimizer Client "))
@@ -154,6 +156,7 @@ class Ui_MainWindow(object):
         self.lblLang.setText(_translate("MainWindow", "Primary Language"))
         self.lblName_2.setText(_translate("MainWindow", "Client Application"))
 
+    #Submits client info to DB and shows start and end points on map
     def submitClientInfo(self):
         name = self.txtName.text()
         age = self.txtAge.text()
@@ -174,9 +177,9 @@ class Ui_MainWindow(object):
         webview.create_window('Home to Destination', html=code)
         webview.start()
         #make a window with the markers of driver and client
-#import img_rc
 
 
+#GUI Main method
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

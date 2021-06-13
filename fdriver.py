@@ -1,5 +1,6 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QApplication, QWidget, QDesktopWidget
 from main import *
 from sheets import *
 from MST import *
@@ -12,6 +13,7 @@ import folium.plugins as plugins
 import datetime
 from fclient import *
 import threading
+import sys
 
 pickDistUpdate=[]
 pickTimeUpdate=[]
@@ -20,13 +22,16 @@ dropDistUpdate=[]
 dropTimeUpdate=[]
 dropFromToUpdate=[]
 address =[]
-
 cnt =0
+
+#THis is the driver side app
+#GUI Main Window Setup
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(858, 858)
         MainWindow.setStyleSheet("")
+        MainWindow.move(50,50)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.lblDriverName = QtWidgets.QLabel(self.centralwidget)
@@ -210,6 +215,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    #Part of GUI setup
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Driver Side Client"))
@@ -236,6 +242,7 @@ class Ui_MainWindow(object):
         self.showTimeSaved.setText(_translate("MainWindow", "0"))
         self.btnUpdate.setText(_translate("MainWindow", "Update"))
 
+    #Submits Driver info, selects suitable clients, finds distances and routes, and plots them on map
     def submitDriverInfo(self):
         global pickDistUpdate
         global pickTimeUpdate
@@ -246,31 +253,57 @@ class Ui_MainWindow(object):
         global address
         driverName = self.txtDriverName.text()
         initSheets()
+        self.pText("Submitting...")
+        self.pText("Fetching data from Sheets Database API...")
         [long,lat,address,destLat,destLong,destAddress] = getClients(driverName)
-        lat.insert(0,'43.578842');
-        long.insert(0,'-79.683668');
-        address.insert(0,'1240 Eglinton Ave W, Mississauga, ON L5V 1N3');
-        destLat.insert(0,'43.578842');
-        destLong.insert(0,'-79.683668');
-        destAddress.insert(0,'1240 Eglinton Ave W, Mississauga, ON L5V 1N3');
+        self.pText("Client Addresses...")
+        for i in address:
+                self.pText("-> "+str(i))
+        self.pText("Client Destinations...")
+        for i in destAddress:
+                self.pText("-> "+str(i))
+
+        self.pText("Fetching Client Locations and Data from database...")
+        lat.insert(0,'43.578842')
+        long.insert(0,'-79.683668')
+        address.insert(0,'1240 Eglinton Ave W, Mississauga, ON L5V 1N3')
+        destLat.insert(0,'43.578842')
+        destLong.insert(0,'-79.683668')
+        destAddress.insert(0,'1240 Eglinton Ave W, Mississauga, ON L5V 1N3')
 
         initDistances(address,destAddress)
+        self.pText("Fetching data Google Maps Distance Matrix API...")
+        self.pText("Initialized client distances...")
         pickUpGraph = createGraph(address,0)
+        self.pText("Creating Graph data structure using client locations...")
         pickUpMst = minSpanningTree(pickUpGraph,len(address))
+        self.pText("Creating a Minimum Spanning Tree using Client Network...")
         [pickUpRoute,pickDistUpdate,pickTimeUpdate,pickFromToUpdate] = getTravelRoute(pickUpMst,len(address),address,0)
+        self.pText("Client Pick Up Route:")
+        for i in pickUpRoute:
+                self.pText("-> "+ str(i))
+        self.pText("Finding Optimal Travel Route using depth-first search...")
         mstClear()
         print()
 
         dropOffGraph = createGraph(destAddress,1)
+        self.pText("Creating graph for client destinations...")
         dropOffMst = minSpanningTree(dropOffGraph,len(destAddress))
+        self.pText("Creating minimum spanning tree for client destinations...")
         [dropOffRoute,dropDistUpdate,dropTimeUpdate,dropFromToUpdate] = getTravelRoute(dropOffMst,len(destAddress),destAddress,1)
+        self.pText("Client Drop Off Route:")
+        for i in dropOffRoute:
+                self.pText("-> "+ str(i))
+        self.pText("Finding Optimal Travel Route Using Client Destinations...")
         mstClear()
 
         
         #print(lat,"\n",long)
         print(pickUpRoute,"\n",pickDistUpdate,"\n",pickTimeUpdate,"\n",pickFromToUpdate)
+        self.pText("Creating Interactive Map to show Travel Routes...")
         self.drawRoute(lat = lat,long = long,travelRoute = pickUpRoute)
-
+        
+    #Updates the realtime distance and time travelled info on the GUI
     def updateInfo(self):
         #threading.Timer(2.0, self.updateInfo).start()
         global pickDistUpdate
@@ -280,7 +313,7 @@ class Ui_MainWindow(object):
         global dropTimeUpdate
         global dropFromToUpdate
         global cnt
-        
+        self.pText("Updating Realtime Data...")
         curDist = float(self.showKmDriven.text()[:-2])
         curTime = float(self.showTimeElapsed.text()[:-1])
         if cnt >=len(dropDistUpdate):
@@ -302,7 +335,8 @@ class Ui_MainWindow(object):
         self.showGoingTo.setText(curTo)
 
         cnt+=1
-
+ 
+    #Draws the route taken by the driver on the map
     def drawRoute(self,lat,long,travelRoute):
         x = datetime.datetime.now()
         lines = []
@@ -360,18 +394,25 @@ class Ui_MainWindow(object):
         m.save('x.html')
         file = open("x.html", "r")
         code = file.read()
-        webview.create_window('Hello world', html=code)
+        webview.create_window('Interactive Map View', html=code)
         webview.start()
         #threading.Timer(2.0, self.updateInfo).start()
 
+    #Sets the console text (black box)
+    def pText(self,text):
+        s = self.textBrowser.toPlainText() + "\n" + text
+        self.textBrowser.setText(s)
 
 
 
+
+#GUI main method
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
+    
     MainWindow.show()
     sys.exit(app.exec_())
